@@ -1,0 +1,1 @@
+# ReconocimientoDeSe-alesVisi-nArtificialPr-ctica1
