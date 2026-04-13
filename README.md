@@ -1,22 +1,20 @@
 # ReconocimientoDeSe-alesVisi-nArtificialPr-ctica1
 
-/practica1_vision/
-│
-├── .gitignore               # Ignorar la carpeta data/ y otros archivos no relevantes.
+##  Estructura del Proyecto
+
+
+```text
+/
+├── .gitignore               # Archivos y carpetas a ignorar (data/, resultado_imgs/, __pycache__)
 ├── README.md                
-├── main.py                  # Script principal.
-├── evaluar_resultados.py    # Script proporcionado por los profesores.
+├── main.py                  # Script principal de ejecución
+├── evaluar_resultados.py    # Script de evaluación (proporcionado por los profesores)
 │
-├── src/                     # Carpeta con código fuente 
+├── src/                     # Código fuente modularizado
 │   ├── __init__.py
-│   ├── utils.py             # Funciones auxiliares (IoU, pintar cajas, leer/escribir txt).
-│   ├── detector_base.py     # Clase padre o interfaz.
-│   ├── detector_mser.py     # Clase con la detección obligatoria (MSER + Color).
-│   └── detector_alt.py      # Clase con la detección alternativa.
+│   ├── utils.py             # Funciones auxiliares (cálculo de IoU, dibujo de bounding boxes, I/O)
+│   ├── detector_mser.py     # Clase principal: Detección usando MSER + Máscaras HSV
+│   └── detector_alt.py      # Clase alternativa
 │
-├── data/                    # (NO SUBIR A GITHUB - Añadir a .gitignore)
-│   ├── train/               # Imágenes de entrenamiento y gt.txt[cite: 153].
-│   └── test/                # Imágenes de test y gt.txt[cite: 154].
-│
-└── memoria/                 # Archivos de la documentación
-    └── memoria_practica1.pdf # El PDF final a entregar[cite: 171].
+└── memoria/                 # Documentación del proyecto
+    └── memoria_practica1.pdf
