@@ -12,9 +12,11 @@ class PanelDetectorMSER:
         self.blue_lower = np.array([102, 200, 70], dtype=np.uint8)
         self.blue_upper = np.array([128, 255, 255], dtype=np.uint8)
         self.ideal_blue_mask = self._build_ideal_blue_mask()
-        self.min_box_area = 1200
+        self.min_box_area = 600
         self.min_box_width = 18
         self.min_box_height = 18
+        self.min_aspect_ratio = 0.5
+        self.max_aspect_ratio = 4.0
 
     def _build_ideal_blue_mask(self):
         ideal_mask = np.zeros((self.mask_height, self.mask_width), dtype=np.uint8)
@@ -96,7 +98,7 @@ class PanelDetectorMSER:
             
             #4. Filtrar por aspecto y tamaño
             aspect_ratio = w / float(h)
-            if aspect_ratio < 1.0 or aspect_ratio > 3.2:
+            if aspect_ratio < self.min_aspect_ratio or aspect_ratio > self.max_aspect_ratio:
                 continue
             
             #5. Agrandar un poco el rectángulo
