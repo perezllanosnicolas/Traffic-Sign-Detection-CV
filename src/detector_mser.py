@@ -6,10 +6,10 @@ class PanelDetectorMSER:
         #Inciar el detecto MSER
         #Los parámetros (delta, min_area, max_area...) tengo que ajustarlos para mejorar el resultado. 
         self.mser = cv2.MSER_create(delta=6, min_area=750, max_area=205000)
-        self.blue_score_threshold = 0.45
+        self.blue_score_threshold = 0.4
         self.mask_height = 40
         self.mask_width = 80
-        self.blue_lower = np.array([102, 200, 70], dtype=np.uint8)
+        self.blue_lower = np.array([100, 200, 70], dtype=np.uint8)
         self.blue_upper = np.array([128, 255, 255], dtype=np.uint8)
         self.ideal_blue_mask = self._build_ideal_blue_mask()
         self.min_box_area = 600
