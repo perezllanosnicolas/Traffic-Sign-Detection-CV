@@ -315,6 +315,7 @@ def draw_PR_fast(tp, fp, tot, show=True, col="g"):
         plt.gca().set_xlim((0, 1))
         plt.gca().set_ylim((0, 1))
         plt.show()
+        #plt.savefig("pr_curve_iou_05.png", dpi=200, bbox_inches="tight")
         plt.draw()
 
     return rec, prec, ap1
@@ -375,6 +376,7 @@ if __name__ == "__main__":
     plt.ylabel("Precision")
     plt.title("Comparación con práctica profesores (IoU>0.5)")
     plt.legend
+    plt.savefig("pr_curve_iou_05.png", dpi=200, bbox_inches="tight")
     
     # --------------------------------------------------------------------------------------------
     #  Figure with overlap (IoU) theshold of 0.7 (>=70% overlap is considered a correct detection)
@@ -399,5 +401,6 @@ if __name__ == "__main__":
     plt.ylabel("Precision")
     plt.title("Comparación con práctica profesores  (IoU>0.7)")
     plt.legend
-    plt.show()
+# plt.show()
+    plt.savefig("pr_curve_iou_07.png", dpi=200, bbox_inches="tight")
     plt.draw()

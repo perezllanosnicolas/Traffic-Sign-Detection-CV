@@ -4,14 +4,16 @@ import glob
 import cv2
 
 from src.detector_mser import PanelDetectorMSER
+from src.detector_alt import PanelDetectorAlt
+from src.detector_hough_primary import PanelDetectorHoughPrimary
+from src.detector_hybrid import PanelDetectorHybrid
 from src.utils import remove_overlapping_boxes
-# from src.detector_alt import PanelDetectorAlt
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Detector de Paneles de Autopista")
     parser.add_argument("--train_path", type=str, required=True, help="Ruta al directorio de entrenamiento")
     parser.add_argument("--test_path", type=str, required=True, help="Ruta al directorio de test")
-    parser.add_argument("--detector", type=str, required=True, choices=['mser', 'hough'], help= "Nombre del detector a usar")
+    parser.add_argument("--detector", type=str, required=True, choices=['mser', 'hough', 'hough_primary', 'hybrid'], help= "Nombre del detector a usar")
     return parser.parse_args()
 
 
@@ -28,8 +30,14 @@ def main():
             print("Usando el detector MSER")
             detector = PanelDetectorMSER()
         elif args.detector == 'hough':
-            print("Usando el detector Hough")      
-            #detector = PanelDetectorAlt()
+            print("Usando el detector Hough (color primero)")
+            detector = PanelDetectorAlt()
+        elif args.detector == 'hough_primary':
+            print("Usando el detector Hough (Hough primero)")
+            detector = PanelDetectorHoughPrimary()
+        elif args.detector == 'hybrid':
+            print("Usando el detector Híbrido (color + Hough refinamiento)")
+            detector = PanelDetectorHybrid()
             
         #3. Preparar el archivo de salida de texto
         output_txt_path = "resultado.txt"
