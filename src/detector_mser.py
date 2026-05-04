@@ -2,21 +2,29 @@ import cv2
 import numpy as np
 
 class PanelDetectorMSER: 
-    def __init__(self):
+    def __init__(self, min_area= 500, hue_min = 90, hue_max = 130, sat_min = 150, score_threshold=0.2, delta=2,
+                 mask_height=40, mask_width=80, min_box_area=1000, min_box_width=18, min_box_height=18, min_aspect_ratio=0.6, max_aspect_ratio=4):
         #Inciar el detecto MSER
-        #Los parámetros (delta, min_area, max_area...) tengo que ajustarlos para mejorar el resultado. 
-        self.mser = cv2.MSER_create(delta=6, min_area=750, max_area=205000)
+        self.min_area = min_area
+        self.hue_min = hue_min
+        self.hue_max = hue_max
+        self.sat_min = sat_min
+        self.score_threshold = score_threshold
+        self.delta = delta
+        self.mser = cv2.MSER_create(delta=self.delta, min_area=self.min_area, max_area=205000)
+        
+        #Máscara
         self.blue_score_threshold = 0.4
-        self.mask_height = 40
-        self.mask_width = 80
+        self.mask_height = mask_height
+        self.mask_width = mask_width
         self.blue_lower = np.array([100, 200, 70], dtype=np.uint8)
         self.blue_upper = np.array([128, 255, 255], dtype=np.uint8)
         self.ideal_blue_mask = self._build_ideal_blue_mask()
-        self.min_box_area = 600
-        self.min_box_width = 18
-        self.min_box_height = 18
-        self.min_aspect_ratio = 0.5
-        self.max_aspect_ratio = 4.0
+        self.min_box_area = min_box_area
+        self.min_box_width = min_box_width
+        self.min_box_height = min_box_height
+        self.min_aspect_ratio = min_aspect_ratio
+        self.max_aspect_ratio = max_aspect_ratio
 
     def _build_ideal_blue_mask(self):
         ideal_mask = np.zeros((self.mask_height, self.mask_width), dtype=np.uint8)
@@ -67,6 +75,9 @@ class PanelDetectorMSER:
         f1 = 2.0 * precision * recall / (precision + recall)
         return 0.55 * f1 + 0.45 * specificity
         
+        
+        
+        
     def detect(self, image): 
         """
         Recibe imágen BGR y devuelve lista de boundig boxes : [x1, y1, x2, y2, score]
@@ -86,9 +97,24 @@ class PanelDetectorMSER:
         
         alto_img, ancho_img = image.shape[:2]
         
+        lower_blue = np.array ([self.hue_min, self.sat_min, 50])
+        upper_blue = np.array ([self.hue_max, 255, 255])
+        
+        target_h, target_w = 40,80
+        mascara_ideal = np.ones((target_h, target_w), dtype= np.float32)
+        mascara_ideal[0:4, :] = -2
+        mascara_ideal[-4:, :] = -2
+        mascara_ideal[:, 0:4] = -2
+        mascara_ideal[:, -4:] = -2
+        
+
+        
         for p in regions: 
             #3. Pasar los píxeles de la región a un rectángulo
             x, y, w, h = cv2.boundingRect(p)
+
+
+
 
             if w < self.min_box_width or h < self.min_box_height:
                 continue
@@ -102,20 +128,43 @@ class PanelDetectorMSER:
                 continue
             
             #5. Agrandar un poco el rectángulo
-            exp_w = int(w * 0.10)
-            exp_h = int(h * 0.10)
+            exp_w = int(w * 0.045)
+            exp_h = int(h * 0.045)
             
             x1 = max(0, x - exp_w)
             y1 = max(0, y - exp_h)
             x2 = min(ancho_img , x + w + exp_w)
             y2 = min(alto_img, y + h + exp_h)
 
-            #6. Filtrar regiones con suficiente contenido azul
-            blue_corr = self._blue_ratio(image, x1, y1, x2, y2)
-            if blue_corr < self.blue_score_threshold:
+            #Análisis de color
+            roi = image[y1:y2, x1:x2]
+            
+            
+            if roi.shape[0] == 0 or roi.shape[1] == 0:
                 continue
             
-            #Añadir la caja a la lista.
-            boxes.append([x1, y1, x2, y2, blue_corr])
-    
+            #Redimensionar a tamaño de máscara ideal 
+            
+            roi_resized = cv2.resize(roi, (target_w, target_h))
+            
+            #Pasar a HSV y buscar píxeles azules saturados
+            roi_hsv = cv2.cvtColor(roi_resized, cv2.COLOR_BGR2HSV)
+            mask_blue = cv2.inRange(roi_hsv, lower_blue, upper_blue)
+            
+            #Normalizar la máscara
+            mask_blue_norm = mask_blue.astype(np.float32) / 255.0
+            
+            matriz_correlacion = mask_blue_norm * mascara_ideal
+            correlacion= np.sum(matriz_correlacion)
+            
+            max_posible = np.sum(mascara_ideal[mascara_ideal>0])
+            score = correlacion/ max_posible
+            
+            
+            score = max(0.0, min(1.0, score))
+            
+            #Filtrar por umbral base
+            if score > self.score_threshold:
+                boxes.append([x1, y1, x2, y2, score])
+                    
         return boxes

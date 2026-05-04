@@ -50,7 +50,7 @@ def main():
                 bbox_list = detector.detect(img)
                 
                 #Filtrar repetidos
-                bbox_list = remove_overlapping_boxes(bbox_list, iou_threshold=0.1)
+                bbox_list = remove_overlapping_boxes(bbox_list, iou_threshold=0.2, iom_threshold=0.999) #Un umbral muy bajo para eliminar casi cualquier solapamiento, incluso mínimo. Ajusta según tus necesidades.
                 
                 #Dibujar y guardar el resultado 
                 img_result = img.copy()
