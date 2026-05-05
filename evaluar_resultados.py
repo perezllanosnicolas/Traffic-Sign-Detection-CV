@@ -329,7 +329,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--detections_file', default="resultado.txt", help='Select the detections results file')
     parser.add_argument(
-        '--instructor_detections_file', default="resultado_jmbuena_road_panels.txt", help='File from homework 1')
+        '--instructor_detections_file', default="data/resultado_jmbuena_road_panels.txt", help='File from homework 1')
     parser.add_argument(
         '--show_detections', default=False, help='Show de detections from detection files on the test images')
     args = parser.parse_args()

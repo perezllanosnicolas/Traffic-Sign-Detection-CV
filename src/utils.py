@@ -19,10 +19,14 @@ def calculate_iou (boxA, boxB):
     
      #Calcular IoU
     iou = interArea / float(boxAArea + boxBArea - interArea)
-    return iou
+    
+    minArea = min(boxAArea, boxBArea)
+    iom = interArea / float(minArea) if minArea > 0 else 0.0
+    return iou, iom
 
 
-def remove_overlapping_boxes( boxes, iou_threshold=0.5):
+def remove_overlapping_boxes( boxes, iou_threshold=0.2, iom_threshold=0.8):
+    
     """
     Elimina cajas repetidas basándose en el solapamiento.
     boxes = lista de [x1, y1, x2, y2, score]
@@ -39,9 +43,10 @@ def remove_overlapping_boxes( boxes, iou_threshold=0.5):
         overlap = False
         for kept_box in kept_boxes:
             #Calcular el solapamiento con las ya guardadas
-            if calculate_iou(box[:4], kept_box[:4]) > iou_threshold:
-                overlap = True
-                break
+            iou, iom = calculate_iou(box[:4], kept_box[:4])
+            if iou > iou_threshold or iom > iom_threshold:
+                    overlap = True
+                    break
             
         if not overlap:
             kept_boxes.append(box)
