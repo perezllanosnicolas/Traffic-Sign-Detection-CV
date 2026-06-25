@@ -4,6 +4,8 @@
 ![OpenCV](https://img.shields.io/badge/OpenCV-4.x-green.svg)
 ![NumPy](https://img.shields.io/badge/NumPy-1.20+-blue.svg)
 
+> **Note:** This repository is **Phase 1** of an End-to-End Traffic Sign Recognition system. Once the panels are detected and cropped, they are passed to our OCR pipeline. Check out the OCR implementation in my [Traffic-Sign-OCR-System repository](https://github.com/perezllanosnicolas/Traffic-Sign-OCR-System).
+
 ## Overview
 This repository contains a robust Computer Vision pipeline designed to detect highway information panels in real-world driving scenarios. 
 
