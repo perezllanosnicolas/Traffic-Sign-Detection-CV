@@ -48,7 +48,8 @@ def debug_detector_hybrid(img_path: str, output_dir: str = "debug_hybrid") -> No
 
     # ── PHASE 2: Blob Extraction ───────────────────────────────────────
     print("[2] Extracting blob candidates...")
-    candidates = det._blob_candidates(mask, img_h, img_w)
+    # UPDATE: Using the new refactored method name
+    candidates = det._extract_blob_candidates(mask, img_h, img_w)
     print(f"    -> Candidates found: {len(candidates)}")
 
     # Draw blobs and search zones
